@@ -71,7 +71,9 @@ typedef signed   long long S64;
 #endif
 #endif
 
-typedef U8 BaBool;
+#ifndef BaBool
+#define BaBool U8
+#endif
 
 
 #define BA_API
