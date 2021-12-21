@@ -10,9 +10,9 @@
  ****************************************************************************
  *            PROGRAM MODULE
  *
- *   $Id: JParser.c 4110 2017-09-13 16:53:07Z wini $
+ *   $Id: JParser.c 4914 2021-12-01 18:24:30Z wini $
  *
- *   COPYRIGHT:  Real Time Logic, 2006 - 2018
+ *   COPYRIGHT:  Real Time Logic, 2006 - 2021
  *
  *   This software is copyrighted by and is the sole property of Real
  *   Time Logic LLC.  All rights, title, ownership, or other interests in
@@ -117,7 +117,7 @@ JErr_setError(JErr* o,JErrT err,const char* msg)
 
 
 #define JDBuf_destructor(o) do {                                    \
-      if((o)->buf) AllocatorIntf_free((o)->alloc, (o)->buf);        \
+      if((o)->buf) { AllocatorIntf_free((o)->alloc, (o)->buf);(o)->buf=0; } \
    }while(0)
 
 
@@ -210,7 +210,7 @@ JLexer_setNumber(JLexer* o, JParserVal* v)
       {
          S64 l = S64_atoll((char*)asmB->buf);
          S32 lsw = (S32)l;
-         if(0xFFFFFFFF00000000 & l || lsw < 0)
+         if((0xFFFFFFFF00000000LL & l) || (lsw < 0))
          {
              v->v.l = o->sn ? -l : l;
              v->t=JParserT_Long;
@@ -567,7 +567,7 @@ JLexer_nextToken(JLexer* o)
 static int
 JParser_setStatus(JParser* o, JParsStat s, int retVal)
 {
-   o->status = s;
+   o->status = (U8)s;
    if(retVal)
    {
       o->stackIx=0;
@@ -645,7 +645,7 @@ JParser_parse(JParser* o, const U8* buf, U32 size)
         L_startObj:
             if( (o->stackIx + 1) >= o->stackSize)
                return JParser_setStatus(o, JParsStat_StackOverflow, -1);
-            o->stack[o->stackIx] = lexerT; /* Assume that it is ok */
+            o->stack[o->stackIx] = (U8)lexerT; /* Assume that it is ok */
             if(lexerT == JLexerT_BeginObject)
             {
                o->val.t = JParserT_BeginObject;

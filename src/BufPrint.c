@@ -10,9 +10,9 @@
  ****************************************************************************
  *            PROGRAM MODULE
  *
- *   $Id: BufPrint.c 4135 2017-12-16 22:42:23Z wini $
+ *   $Id: BufPrint.c 4914 2021-12-01 18:24:30Z wini $
  *
- *   COPYRIGHT:  Real Time Logic, 2002 - 2017
+ *   COPYRIGHT:  Real Time Logic, 2002 - 2021
  *
  *   This software is copyrighted by and is the sole property of Real
  *   Time Logic LLC.  All rights, title, ownership, or other interests in
@@ -167,7 +167,7 @@ basprintf(char* buf, const char* fmt, ...)
 #ifndef NO_DOUBLE
 union UIEEE_754
 {
-   unsigned long aul[2];
+   unsigned int aul[2];
    double        dVal;
 };
 #endif
@@ -570,6 +570,7 @@ BufPrint_vprintf(BufPrint* o, const char* fmt, va_list argList)
          switch (*fmt)
          {
             case 'p': flags |= FLAG_POINTER;
+               /* fall through */
             case 'x': case 'X':
             case 'o': case 'u':
             case 'd': case 'i':
