@@ -12,7 +12,7 @@
  *
  *   $Id$
  *
- *   COPYRIGHT:  Real Time Logic LLC, 2014
+ *   COPYRIGHT:  Real Time Logic LLC, 2014 - 2021
  *
  *   This software is copyrighted by and is the sole property of Real
  *   Time Logic LLC.  All rights, title, ownership, or other interests in
@@ -168,35 +168,25 @@ setLed(int ledId, int on)
 #else
 #include <termios.h>
 /* UNIX kbhit and getch simulation */
-static struct termios orgTs;
-
-static void
-resetTerminalMode()
-{
-   tcsetattr(0, TCSANOW, &orgTs);
-}
-
-static void
-setConioTerminalMode()
-{
-   struct termios asyncTs;
-   tcgetattr(0, &orgTs);
-   memcpy(&asyncTs, &orgTs, sizeof(asyncTs));
-   /* register cleanup handler, and set the new terminal mode */
-   atexit(resetTerminalMode);
-   cfmakeraw(&asyncTs);
-   asyncTs.c_oflag=orgTs.c_oflag;
-   tcsetattr(0, TCSANOW, &asyncTs);
-}
 
 static int
 xkbhit()
 {
    struct timeval tv = { 0L, 0L };
    fd_set fds;
+   struct termios orgTs;
+   struct termios asyncTs;
+   int set;
+   tcgetattr(0, &orgTs);
+   memcpy(&asyncTs, &orgTs, sizeof(asyncTs));
+   cfmakeraw(&asyncTs);
+   asyncTs.c_oflag=orgTs.c_oflag;
+   tcsetattr(0, TCSANOW, &asyncTs);
    FD_ZERO(&fds);
-   FD_SET(0, &fds);
-   return select(1, &fds, NULL, NULL, &tv);
+   FD_SET(STDIN_FILENO, &fds);
+   set = select(STDIN_FILENO+1, &fds, NULL, NULL, &tv);
+   tcsetattr(0, TCSANOW, &orgTs);
+   return set;
 }
 
 static int
@@ -296,8 +286,6 @@ main()
 #ifdef _WIN32
    /* Windows specific: Start winsock library */
    { WSADATA wsaData; WSAStartup(MAKEWORD(1,1), &wsaData); }
-#else
-   setConioTerminalMode(); /* Remove this when used in an embedded device */
 #endif
    
    mainTask();
