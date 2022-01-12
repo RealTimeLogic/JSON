@@ -10,9 +10,9 @@
  ****************************************************************************
  *            HEADER
  *
- *   $Id: BufPrint.h 4323 2018-11-06 15:48:23Z wini $
+ *   $Id: BufPrint.h 4915 2021-12-01 18:26:55Z wini $
  *
- *   COPYRIGHT:  Real Time Logic LLC, 2008 - 2018
+ *   COPYRIGHT:  Real Time Logic LLC, 2008 - 2022
  *
  *   This software is copyrighted by and is the sole property of Real
  *   Time Logic LLC.  All rights, title, ownership, or other interests in
@@ -109,15 +109,29 @@ typedef struct BufPrint
 {
 #ifdef __cplusplus
 
-      /** BufPrint constructor.
+      /** BufPrint constructor. When using this constructor, make sure
+          to also call setBuf(). C constructor name: BufPrint_constructor
 
           \param userData an optional argument stored in the BufPrint
           object and accessible in the flush callback.
-          \sa getUserData()
-
           \param flush a pointer to the flush callback function.
+
+          \sa setBuf(), getUserData()
       */
       BufPrint(void* userData=0, BufPrint_Flush flush=0);
+
+   /** BufPrint constructor. When using this constructor, make sure
+       to also call setBuf(). C constructor name: BufPrint_constructor2
+       
+       \param buf the buffer
+       \param size the buffer size
+       \param userData an optional argument stored in the BufPrint
+       object and accessible in the flush callback.
+       \param flush a pointer to the flush callback function.
+       
+       \sa setBuf(), getUserData()
+   */
+   BufPrint(char* buf,int size,void* userData=0,BufPrint_Flush flush=0);
 
       /** Returns the user data pointer set in the constructor.
        */
@@ -240,6 +254,8 @@ extern "C" {
 #define BufPrint_getBufSize(o) (o)->cursor
 BA_API void BufPrint_constructor(
    BufPrint* o,void* userData,BufPrint_Flush flush);
+BA_API void BufPrint_constructor2(
+   BufPrint* o, char* buf,int size,void* userData,BufPrint_Flush flush);
 #define BufPrint_destructor(o)
 BA_API int BufPrint_vprintf(BufPrint* o, const char* fmt, va_list argList);
 BA_API int BufPrint_printf(BufPrint* o, const char* fmt, ...);
@@ -259,6 +275,9 @@ inline void* BufPrint::getUserData() {
 }
 inline BufPrint::BufPrint(void* userData, BufPrint_Flush flush) {
    BufPrint_constructor(this, userData,flush); }
+inline BufPrint::BufPrint(
+   char* buf,int size,void* userData,BufPrint_Flush flush) {
+   BufPrint_constructor2(this,buf,size,userData,flush); }
 inline int BufPrint::vprintf(const char* fmt, va_list argList) {
    return BufPrint_vprintf(this, fmt, argList); }
 inline int BufPrint::printf(const char* fmt, ...) {

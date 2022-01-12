@@ -663,8 +663,8 @@ M2MLED_constructor(M2MLED* o, SOCKET* sock)
 {
    JParserIntf_constructor((JParserIntf*)o,  /* cast to base class */
                            M2MLED_parserCallback);
-   BufPrint_constructor(&o->out, sock, BufPrint_sockWrite);
-   BufPrint_setBuf(&o->out, o->outBuf, IN_OUT_BUF_SIZE);
+   BufPrint_constructor2(
+      &o->out, o->outBuf, IN_OUT_BUF_SIZE, sock, BufPrint_sockWrite);
    JErr_constructor(&o->err);
    JEncoder_constructor(&o->encoder, &o->err, &o->out);
    JDecoder_constructor(&o->decoder, o->inBuf, IN_OUT_BUF_SIZE, 0);

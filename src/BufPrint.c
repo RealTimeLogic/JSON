@@ -10,9 +10,9 @@
  ****************************************************************************
  *            PROGRAM MODULE
  *
- *   $Id: BufPrint.c 4914 2021-12-01 18:24:30Z wini $
+ *   $Id: BufPrint.c 4975 2021-12-29 01:54:26Z wini $
  *
- *   COPYRIGHT:  Real Time Logic, 2002 - 2021
+ *   COPYRIGHT:  Real Time Logic, 2002 - 2022
  *
  *   This software is copyrighted by and is the sole property of Real
  *   Time Logic LLC.  All rights, title, ownership, or other interests in
@@ -60,11 +60,8 @@ basnprintf(char* buf, int len, const char* fmt, ...)
    int retv;
    va_list varg;
    BufPrint bufPrint;
-   BufPrint_constructor(&bufPrint, 0, sprintfIsFull);
-   bufPrint.buf = buf;
-   bufPrint.bufSize = (len -1); /* -1 -> the string terminator */
-   bufPrint.cursor = 0; /* Start position is beginning of buf */
-
+   /* (len -1) -> -1 -> space for the string terminator */
+   BufPrint_constructor2(&bufPrint, buf, (len -1), 0, sprintfIsFull);
    va_start(varg, fmt);
    retv = BufPrint_vprintf(&bufPrint, fmt, varg);
    if( retv >= 0 )
@@ -83,10 +80,9 @@ basprintf(char* buf, const char* fmt, ...)
    int retv;
    va_list varg;
    BufPrint bufPrint;
-   BufPrint_constructor(&bufPrint, 0, sprintfIsFull);
-   bufPrint.buf = buf;
-    /* We have no idea what the size is */
-   bufPrint.bufSize = (int)((unsigned int)(~0)/2u);
+   /* We have no idea what the size is so let's set it to fffff */
+   BufPrint_constructor2(
+      &bufPrint, buf, (int)((unsigned int)(~0)/2u), 0, sprintfIsFull);
    bufPrint.cursor = 0; /* Start position is beginning of buf */
    va_start(varg, fmt);
    retv = BufPrint_vprintf(&bufPrint, fmt, varg);
@@ -210,6 +206,16 @@ BufPrint_constructor(BufPrint* o, void* userData, BufPrint_Flush flush)
    o->userData = userData;
    o->flushCB = flush ? flush : sprintfIsFull;
 }
+
+BA_API void
+BufPrint_constructor2(
+   BufPrint* o, char* buf,int size,void* userData,BufPrint_Flush flush)
+{
+   BufPrint_constructor(o, userData,flush);
+   o->buf=buf;
+   o->bufSize=size;
+}
+
 
 #define BufPrint_getSizeLeft(o) (o.bufSize - o.cursor)
 

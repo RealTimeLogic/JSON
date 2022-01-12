@@ -11,7 +11,7 @@
  ****************************************************************************
  *			      HEADER
  *
- *   $Id: AllocatorIntf.h 3883 2016-04-13 00:55:30Z wini $
+ *   $Id: AllocatorIntf.h 4914 2021-12-01 18:24:30Z wini $
  *
  *   COPYRIGHT:  Real Time Logic LLC, 2014
  *
