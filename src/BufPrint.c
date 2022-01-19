@@ -10,7 +10,7 @@
  ****************************************************************************
  *            PROGRAM MODULE
  *
- *   $Id: BufPrint.c 4975 2021-12-29 01:54:26Z wini $
+ *   $Id: BufPrint.c 5029 2022-01-16 21:32:09Z wini $
  *
  *   COPYRIGHT:  Real Time Logic, 2002 - 2022
  *
@@ -46,11 +46,15 @@
  ***************************************************************************/
 
 static int
-sprintfIsFull(struct BufPrint* print, int sizeRequired)
+BufPrint_defaultFlush(struct BufPrint* bp, int sizeRequired)
 {
-   (void)print; /* not used */
-   (void)sizeRequired; /* not used */
-   return -1; /* Failed, buffer is full */
+   bp->cursor=0; /* Reset */
+   /* Buffer is full if sizeRequired set (if not a
+    * BufPrint_flush() call)
+    * This indicates a program error.
+    */
+   baAssert(sizeRequired == 0); /* Program error in code calling BufPrint_xxx */
+   return sizeRequired ? -1 : 0;
 }
 
 
@@ -61,7 +65,7 @@ basnprintf(char* buf, int len, const char* fmt, ...)
    va_list varg;
    BufPrint bufPrint;
    /* (len -1) -> -1 -> space for the string terminator */
-   BufPrint_constructor2(&bufPrint, buf, (len -1), 0, sprintfIsFull);
+   BufPrint_constructor2(&bufPrint, buf, (len -1), 0, BufPrint_defaultFlush);
    va_start(varg, fmt);
    retv = BufPrint_vprintf(&bufPrint, fmt, varg);
    if( retv >= 0 )
@@ -82,7 +86,7 @@ basprintf(char* buf, const char* fmt, ...)
    BufPrint bufPrint;
    /* We have no idea what the size is so let's set it to fffff */
    BufPrint_constructor2(
-      &bufPrint, buf, (int)((unsigned int)(~0)/2u), 0, sprintfIsFull);
+      &bufPrint, buf, (int)((unsigned int)(~0)/2u), 0, BufPrint_defaultFlush);
    bufPrint.cursor = 0; /* Start position is beginning of buf */
    va_start(varg, fmt);
    retv = BufPrint_vprintf(&bufPrint, fmt, varg);
@@ -204,7 +208,7 @@ BufPrint_constructor(BufPrint* o, void* userData, BufPrint_Flush flush)
 {
    memset(o, 0, sizeof(BufPrint));
    o->userData = userData;
-   o->flushCB = flush ? flush : sprintfIsFull;
+   o->flushCB = flush ? flush : BufPrint_defaultFlush;
 }
 
 BA_API void
@@ -1098,6 +1102,10 @@ BufPrint_flush(BufPrint* o)
    if(!o)
       return -1;
    if(o->cursor)
-      return o->flushCB(o, 0);
+   {
+      int rsp = o->flushCB(o, 0);
+      o->cursor=0;
+      return rsp;
+   }
    return 0;
 }

@@ -10,7 +10,7 @@
  ****************************************************************************
  *            HEADER
  *
- *   $Id: BufPrint.h 4915 2021-12-01 18:26:55Z wini $
+ *   $Id: BufPrint.h 5029 2022-01-16 21:32:09Z wini $
  *
  *   COPYRIGHT:  Real Time Logic LLC, 2008 - 2022
  *
@@ -85,25 +85,38 @@ BA_API int basnprintf(char* buf, int len, const char* fmt, ...);
 
 /** BufPrint flush callback function.
 
-A BufPrint instance calls the flush callback function when buffer is
-full. The callback can either extend the buffer or flush and reset the
-buffer.
+A BufPrint instance calls the flush callback function when the buffer
+is full or when #BufPrint::flush is called. The callback can either
+extend the buffer or flush and reset the buffer.
+
+The following default callback is set if no callback is installed when
+calling the BufPrint constructor:
+
+\code
+BufPrint_defaultFlush(struct BufPrint* bp, int sizeRequired)
+{
+   bp->cursor=0; // Reset
+   baAssert(sizeRequired == 0); // Program error in code calling BufPrint_xxx
+   return sizeRequired ? -1 : 0;
+}
+\endcode
 
 \param o the object. BufPrint is typically upcasted to the derived object.
-\param sizeRequired the required expands size if the callback is
-expanding the buffer. Not used when flushing and resetting the buffer.
+\param sizeRequired the minimum size the buffer must expand. Note that
+sizeRequired will be zero when the callback is called via
+BufPrint::flush
+
 */
 typedef int (*BufPrint_Flush)(struct BufPrint* o, int sizeRequired);
 
 /** The BufPrint class, which implements an ANSI compatible printf
-    method, is an abstract class used as a base for many of the
-    Barracuda classes.
+    method, is a base class used by several other classes.
 
-    The output from printf is formatted in an internal buffer. This
-    class does not allocate memory for the buffer. Thus, any class
-    using BufPrint must provide a buffer BufPrint can use. BufPrint
-    calls the callback function BufPrint_Flush when the buffer is
-    full.
+    This class does not allocate memory for the buffer. Thus, any
+    class using BufPrint must provide a buffer BufPrint can use. The
+    output from printf is formatted in the buffer passed into the
+    constructor. BufPrint calls the callback function BufPrint_Flush
+    when the buffer is full. See #BufPrint_Flush for additional details.
  */
 typedef struct BufPrint
 {
@@ -114,7 +127,8 @@ typedef struct BufPrint
 
           \param userData an optional argument stored in the BufPrint
           object and accessible in the flush callback.
-          \param flush a pointer to the flush callback function.
+          \param flush a pointer to the flush callback function. See
+          #BufPrint_Flush for details.
 
           \sa setBuf(), getUserData()
       */
@@ -127,7 +141,8 @@ typedef struct BufPrint
        \param size the buffer size
        \param userData an optional argument stored in the BufPrint
        object and accessible in the flush callback.
-       \param flush a pointer to the flush callback function.
+       \param flush a pointer to the flush callback function. See
+       #BufPrint_Flush for details.
        
        \sa setBuf(), getUserData()
    */
