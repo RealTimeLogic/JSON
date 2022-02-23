@@ -18,7 +18,7 @@ A detailed explanation on the three different modes can be found in the [referen
 * The StaticAllocatorEx.cpp shows how to use a static allocator with the [JSON Parser Value Factory](https://realtimelogic.com/ba/doc/en/C/reference/html/structJParserValFact.html).
 * Generic test/example program: test/test1.cpp
 
-# Additional IoT JSON Examples
+# Additional JSON IoT Examples
  * The [Minnow WebSocket Server's Reference Example](https://realtimelogic.com/articles/Creating-SinglePage-Apps-with-the-Minnow-Server) uses JSON for messages sent over WebSockets.
  * The [SMQ IoT Protocol](https://realtimelogic.com/products/simplemq/)'s [publisher and subscriber examples](https://github.com/RealTimeLogic/SMQ#1-introductory-smq-examples) send and receive JSON encoded messages. The readme file includes [additional information](https://github.com/RealTimeLogic/SMQ#simplified-cc-design) on how to use this JSON library for sending a large JSON message as chunks and how to parse the chunks as they trickle in.
 
