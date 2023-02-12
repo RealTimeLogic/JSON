@@ -10,7 +10,7 @@
  ****************************************************************************
  *            HEADER
  *
- *   $Id: BufPrint.h 5029 2022-01-16 21:32:09Z wini $
+ *   $Id: BufPrint.h 5355 2022-11-16 10:33:45Z wini $
  *
  *   COPYRIGHT:  Real Time Logic LLC, 2008 - 2022
  *
@@ -155,7 +155,7 @@ typedef struct BufPrint
       /** The printf function's format is identical to the standard
           ANSI vprintf function. See BufPrint::printf for the format flags.
           \param fmt See vprintf in the
-<a href="http://www.infosys.utas.edu.au/info/documentation/C/CStdLib.html#stdio.h">
+<a href="../clib.html#stdio.h">
           C Standard Library</a> for more information.
           \param argList See vprintf in the C Standard Library for
           more information.
@@ -171,7 +171,7 @@ typedef struct BufPrint
           BufPrint::jsonString
 
           \param fmt See vprintf in the
-          <a href="../../../StdC/CStdLib.html#stdio.h">
+          <a href="../clib.html#stdio.h">
           C Standard Library</a> for more information.
        */
       int printf(const char* fmt, ...);
@@ -304,8 +304,8 @@ inline int BufPrint::printf(const char* fmt, ...) {
 }
 inline char* BufPrint::getBuf() {
    return BufPrint_getBuf(this); }
-inline void BufPrint::setBuf(char* buf, int size) {
-   BufPrint_setBuf(this, buf, size); }
+inline void BufPrint::setBuf(char* buffer, int size) {
+   BufPrint_setBuf(this, buffer, size); }
 inline U32 BufPrint::getBufSize() {
    return BufPrint_getBufSize(this); }
 inline void BufPrint::erase() {

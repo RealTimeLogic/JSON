@@ -214,8 +214,8 @@ inline int JErr::setTooFewParams() {
    return JErr_setTooFewParams(this);}
 inline int JErr::setTypeErr(JVType expT, JVType recT) {
    return JErr_setTypeErr(this, expT, recT);}
-inline int JErr::setError(JErrT err,const char* msg) {
-   return JErr_setError(this,err,msg);}
+inline int JErr::setError(JErrT e,const char* message) {
+   return JErr_setError(this,e, message);}
 #endif
 
 

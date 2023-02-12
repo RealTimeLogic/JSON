@@ -232,12 +232,12 @@ inline int JDecoder::vget(const char* fmt, va_list* argList){
    return JDecoder_vget(this, fmt,  argList);
 }
 inline int JDecoder::get(const char* fmt, ...){
-   int status;
+   int stat;
    va_list argList;
    va_start(argList, fmt);
-   status = JDecoder_vget(this, fmt, &argList);
+   stat = JDecoder_vget(this, fmt, &argList);
    va_end(argList);
-   return status;
+   return stat;
 }
 inline JDecoder::JDecoder(U8* buf, int bufSize, int extraStackLen){
    JDecoder_constructor(this, buf, bufSize, extraStackLen);
