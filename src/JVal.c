@@ -10,9 +10,9 @@
  ****************************************************************************
  *            PROGRAM MODULE
  *
- *   $Id: JVal.c 4914 2021-12-01 18:24:30Z wini $
+ *   $Id: JVal.c 5729 2026-02-23 18:58:06Z wini $
  *
- *   COPYRIGHT:  Real Time Logic, 2006 - 2018
+ *   COPYRIGHT:  Real Time Logic, 2006 - 2026
  *
  *   This software is copyrighted by and is the sole property of Real
  *   Time Logic LLC.  All rights, title, ownership, or other interests in
@@ -298,12 +298,14 @@ JVal_extract(JVal* o,JErr* err,const char** fmt, va_list* argList)
 {
    for( ; **fmt ; (*fmt)++)
    {
+//      if (!o) goto L_params; added in 5562, but makes code fail
       if(JErr_isError(err))
          return 0;
       if(JVal_extractValue(o, err, fmt, argList))
          break;
       if(!o)
       {
+//        L_params:
          JErr_setTooFewParams(err);
          return 0;
       }

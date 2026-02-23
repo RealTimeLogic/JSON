@@ -10,9 +10,9 @@
  ****************************************************************************
  *            PROGRAM MODULE
  *
- *   $Id: JEncoder.c 4914 2021-12-01 18:24:30Z wini $
+ *   $Id: JEncoder.c 5050 2022-01-24 23:28:23Z wini $
  *
- *   COPYRIGHT:  Real Time Logic, 2006 - 2018
+ *   COPYRIGHT:  Real Time Logic, 2006 - 2022
  *
  *   This software is copyrighted by and is the sole property of Real
  *   Time Logic LLC.  All rights, title, ownership, or other interests in
@@ -373,7 +373,7 @@ JEncoder_beginObject(JEncoder* o)
 {
    if(JEncoder_beginValue(o, FALSE))
    {
-      if(o->objectStack.level < (sizeof(o->objectStack.data)*8-1))
+      if(o->objectStack.level < (S32)(sizeof(o->objectStack.data)*8-1))
       {
          /* Set current stack position to "isObject" */
          o->objectStack.level++;
@@ -422,7 +422,7 @@ JEncoder_beginArray(JEncoder* o)
 {
    if(JEncoder_beginValue(o, FALSE))
    {
-      if(o->objectStack.level < (sizeof(o->objectStack.data)*8))
+      if(o->objectStack.level < (S32)(sizeof(o->objectStack.data)*8))
       {
          o->objectStack.level++;
          if(BufPrint_printf(o->out, "[", -1)<0)
